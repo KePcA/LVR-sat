@@ -14,6 +14,8 @@ import java.util.Stack;
  */
 
 
+ //Komentar
+ 
 public class BrainFuckInterpreter {
 	
 	
