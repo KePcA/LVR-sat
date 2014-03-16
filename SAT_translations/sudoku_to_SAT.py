@@ -1,3 +1,5 @@
+#coding:utf-8
+
 """
 Translation of sudoku problem to SAT problem
 """
