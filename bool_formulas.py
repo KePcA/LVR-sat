@@ -100,6 +100,13 @@ class And():
                 return False
         return True
 
+    #If conjunction contains no variables
+    def isEmpty(self):
+        if self.formulas:
+            return False
+        else:
+            return True
+
 ############## Class for representation of OR ########################
 class Or():
 
@@ -124,6 +131,13 @@ class Or():
             if value:
                 return True
         return False
+
+    #If disjunction contains no variables
+    def isEmpty(self):
+        if self.formulas:
+            return False
+        else:
+            return True
 
 
 
