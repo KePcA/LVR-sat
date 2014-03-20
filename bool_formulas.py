@@ -15,9 +15,9 @@ class Fls():
         return "F"
 
     def __eq__(self, other):
-        return type(other)==Fls
+        return type(other) == Fls
 
-    def valuate(self):
+    def evaluate(self):
         return False
 
 
@@ -33,9 +33,9 @@ class Tru():
         return "T"
 
     def __eq__(self, other):
-        return type(other)==Fls
+        return type(other) == Fls
 
-    def valuate(self):
+    def evaluate(self):
         return True
 
 
@@ -49,10 +49,10 @@ class Var:
         return self.name
 
     def __eq__(self, other):
-        return type(other)==Var and other.name==self.name
+        return type(other) == Var and other.name == self.name
 
     #Value of the variable is obtained from the dictionary (dict) in which values of all the variables are stored, if exists.
-    def valuate(self, dict):
+    def evaluate(self, dict):
         return dict[self.name]
 
 
@@ -67,11 +67,11 @@ class Not():
         return "¬"+repr(self.formula)
 
     def __eq__(self, other):
-        return type(other)==Not and self.formula==other.formula
+        return type(other) == Not and self.formula == other.formula
 
     #We return the negation of our formula which value we get from the dictionary of variables' values (dict).
-    def valuate(self, dict):
-        return not self.formula.valuate(dict)
+    def evaluate(self, dict):
+        return not self.formula.evaluate(dict)
 
 
 
@@ -89,14 +89,12 @@ class And():
         return "("+string[5:]+")"
 
     def __eq__(self, other):
-        return type(other)==And and self.formulas==other.formulas
+        return type(other) == And and self.formulas == other.formulas
 
     #Method returns conjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is false.
-    def valuate(self, dict):
-        value = True
+    def evaluate(self, dict):
         for formula in self.formulas:
-            value = value and formula.valuate(dict)
-            if not value:
+            if formula.evaluate(dict) is False:
                 return False
         return True
 
@@ -121,14 +119,12 @@ class Or():
         return "("+string[5:]+")"
 
     def __eq__(self, other):
-        return type(other)==Or and self.formulas==other.formulas
+        return type(other) == Or and self.formulas == other.formulas
 
     #Method returns disjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is true.
-    def valuate(self, dict):
-        value = False
+    def evaluate(self, dict):
         for formula in self.formulas:
-            value = value or formula.valuate(dict)
-            if value:
+            if formula.evaluate(dict) is True:
                 return True
         return False
 
