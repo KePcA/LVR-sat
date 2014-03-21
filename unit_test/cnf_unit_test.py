@@ -4,6 +4,7 @@ import unittest
 import bool_formulas as bf
 import SAT_implementation.algorithm_utilities as au
 
+
 class cnf_unit_test(unittest.TestCase):
 
 	def test_formulas_already_in_cnf(self):

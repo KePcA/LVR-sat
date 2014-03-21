@@ -4,11 +4,11 @@ import unittest
 import bool_formulas as bf
 import SAT_implementation.algorithm_utilities as au
 
+
 class replace_unit_test(unittest.TestCase):
 
 	def setUp(self):
 		self.seq = range(10)
-
 
 	def test_replacing_one_value(self):
 		q = bf.Var("q")
