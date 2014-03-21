@@ -111,7 +111,7 @@ def simplify(p):
 	"""
 	Simplified the specified p formula.
 	"""
-	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls) or isinstance(p, bf.Var):
+	if (isinstance(p, bf.Tru)) or isinstance(p, bf.Fls) or isinstance(p, bf.Var):
 		# Values that can't be simplified any further.
 		return p
 	elif isinstance(p, bf.Not):
@@ -137,7 +137,7 @@ def simplify(p):
 			return simplify(bf.Or([bf.Not(y) for y in x.formulas]))
 	elif isinstance(p, bf.Or):
 		simplified = [simplify(x) for x in p.formulas]
-		formulas = set(sum([x.formulas if isinstance(x, bf.Or) else [x] for x in simplified], []))
+		formulas = remove_duplicates(sum([x.formulas if isinstance(x, bf.Or) else [x] for x in simplified], []))
 		length = len(formulas)
 		if length == 0:
 			return bf.Fls
@@ -147,12 +147,13 @@ def simplify(p):
 			if any([x for x in formulas if isinstance(x, bf.Tru)]):
 				return bf.Tru
 			formulas = [x for x in formulas if not isinstance(x, bf.Fls)]
+
 			# TODO: needs to be implemented
 
-			return bf.Or(sorted(formulas))
+			return simplify(bf.Or(sorted(formulas)))
 	elif isinstance(p, bf.And):
 		simplified = [simplify(x) for x in p.formulas]
-		formulas = set(sum([x.formulas if isinstance(x, bf.And) else [x] for x in simplified], []))
+		formulas = remove_duplicates(sum([x.formulas if isinstance(x, bf.And) else [x] for x in simplified], []))
 		length = len(formulas)
 		if length == 0:
 			return bf.Tru
@@ -166,8 +167,18 @@ def simplify(p):
 			# Remove all trues
 			formulas = [x for x in formulas if not isinstance(x, bf.Tru)]
 			# TODO: needs to be implemented
-			return bf.And(sorted(formulas))
+			return simplify(bf.And(sorted(formulas)))
 
+
+def remove_duplicates(lst):
+	"""
+	Removes the duplicates from the specified list.
+	"""
+	result = []
+	for x in lst:
+		if x not in result:
+			result.append(x)
+	return result
 
 def replace(values, p):
 	"""
@@ -185,8 +196,9 @@ def replace(values, p):
 		return bf.Or([replace(values, x) for x in p.formulas])
 	elif isinstance(p, bf.And):
 		return bf.And([replace(values, x) for x in p.formulas])
-	else:
-		return p
+	elif isinstance(p, bf.Not):
+		return bf.Not(replace(values, p.formula))
+
 
 def evaluate(values, p):
 	"""

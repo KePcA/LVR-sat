@@ -15,7 +15,7 @@ class Fls():
         return "F"
 
     def __eq__(self, other):
-        return type(other) == Fls
+        return isinstance(other, Fls)
 
     def evaluate(self):
         return False
@@ -33,7 +33,7 @@ class Tru():
         return "T"
 
     def __eq__(self, other):
-        return type(other) == Fls
+        return isinstance(other, Tru)
 
     def evaluate(self):
         return True
@@ -49,11 +49,11 @@ class Var:
         return self.name
 
     def __eq__(self, other):
-        return type(other) == Var and other.name == self.name
+        return isinstance(other, Var) and other.name == self.name
 
     #Value of the variable is obtained from the dictionary (dict) in which values of all the variables are stored, if exists.
     def evaluate(self, dict):
-        return dict[self.name]
+        return dict.get(self.name)
 
 
 ############## Class for representation of NEGATION ########################
@@ -67,7 +67,7 @@ class Not():
         return "¬"+repr(self.formula)
 
     def __eq__(self, other):
-        return type(other) == Not and self.formula == other.formula
+        return isinstance(other, Not) and self.formula == other.formula
 
     #We return the negation of our formula which value we get from the dictionary of variables' values (dict).
     def evaluate(self, dict):
@@ -89,7 +89,7 @@ class And():
         return "("+string[5:]+")"
 
     def __eq__(self, other):
-        return type(other) == And and self.formulas == other.formulas
+        return isinstance(other, And) and self.formulas == other.formulas
 
     #Method returns conjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is false.
     def evaluate(self, dict):
@@ -119,7 +119,7 @@ class Or():
         return "("+string[5:]+")"
 
     def __eq__(self, other):
-        return type(other) == Or and self.formulas == other.formulas
+        return isinstance(other, Or) and self.formulas == other.formulas
 
     #Method returns disjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is true.
     def evaluate(self, dict):
