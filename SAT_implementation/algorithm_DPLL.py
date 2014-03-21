@@ -5,7 +5,7 @@ Implementation of DPLL algorithm for solving SAT problem
 """
 
 import bool_formulas as bf
-
+import algorithm_utilities as au
 
 
 
@@ -90,9 +90,29 @@ def all_variables(CNF_formula):
 
 
 
-#Solves SAT problem by trying all the possibilities for variables in formula
-def SAT_solver_brute_force(formula):
-   return
+#Solves SAT problem by trying all the possibilities for variables in formula - NOT YET WORKING
+def SAT_solver_brute_force(CNF_formula, dictionary):
+
+    #Formula is Tru / satisfiable - return dictionary with given values of variables
+    if isinstance(CNF_formula, bf.Tru):
+        return dictionary
+
+    #Foruma is Fls -/ not satisfiable -  return False
+    elif isinstance(CNF_formula, bf.Fls):
+        return False
+
+    else:
+        variables = all_variables(CNF_formula)
+        dictionary[variables[0]] = bf.Tru()
+        #simplified_formula = simplify(CNF_formula, dictionary)
+        #return SAT_solver_brute_force(simplified_formula, dictionary)
+
+        dictionary[variables[0]] = bf.Fls()
+        #simplified_formula = simplify(CNF_formula, dictionary)
+        #return SAT_solver_brute_force(simplified_formula, dictionary)
+
+
+
 
 
 """
@@ -139,7 +159,14 @@ p = bf.Var("p")
 r = bf.Var("r")
 test_CNF_formula = bf.And([bf.Or([q,p, r]), bf.Or([bf.Not(p), bf.Not(r)]), bf.Or([bf.Not(q)])])
 
+test_CNF_formula.__repr__()
 
+dictionary = {"p": bf.Tru()}
+
+replaced_formula = au.replace(dictionary, test_CNF_formula)
+print replaced_formula
+
+"""
 (values, formula) = DPLL(test_CNF_formula)
 print values
 print formula.__repr__()
@@ -147,4 +174,4 @@ print formula.__repr__()
 
 variables = all_variables(test_CNF_formula)
 print variables
-
+"""
