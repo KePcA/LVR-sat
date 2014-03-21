@@ -1,6 +1,13 @@
 import bool_formulas as bf
 
 
+def cnf_nnf(p):
+	"""
+	Converts the specified p formula to a NNF form and then to a CNF form.
+	"""
+	return cnf(nnf(p))
+
+
 def cnf(p):
 	"""
 	Converts the specified p formula to a CNF form.
@@ -101,21 +108,32 @@ def nnf(p):
 
 
 def simplify(p):
+	"""
+	Simplified the specified p formula.
+	"""
 	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls) or isinstance(p, bf.Var):
+		# Values that can't be simplified any further.
 		return p
 	elif isinstance(p, bf.Not):
+		# Not simplification.
 		x = p.formula
 		if isinstance(x, bf.Tru):
+			# Not(Tru) -> Fls
 			return bf.Fls()
 		elif isinstance(x, bf.Fls):
+			# Not(Fls) -> Tru
 			return bf.Tru()
 		elif isinstance(x, bf.Var):
+			# Not(Var(x)) -> Not(Var(x))
 			return p
 		elif isinstance(x, bf.Not):
+			# Not(Not(x)) -> x
 			return simplify(x.formula)
 		elif isinstance(x, bf.Or):
+			# Or(y1,...,yn) -> And(Not(y1),...Not(yn))
 			return simplify(bf.And([bf.Not(y) for y in x.formulas]))
 		elif isinstance(x, bf.And):
+			# And(y1,...,yn) -> Or(Not(y1),...Not(yn))
 			return simplify(bf.Or([bf.Not(y) for y in x.formulas]))
 	elif isinstance(p, bf.Or):
 		simplified = [simplify(x) for x in p.formulas]
@@ -126,7 +144,11 @@ def simplify(p):
 		if length == 1:
 			return formulas[0]
 		else:
+			if any([x for x in formulas if isinstance(x, bf.Tru)]):
+				return bf.Tru
+			formulas = [x for x in formulas if not isinstance(x, bf.Fls)]
 			# TODO: needs to be implemented
+
 			return bf.Or(sorted(formulas))
 	elif isinstance(p, bf.And):
 		simplified = [simplify(x) for x in p.formulas]
@@ -137,13 +159,39 @@ def simplify(p):
 		if length == 1:
 			return formulas[0]
 		else:
+			absorption = [x for x in formulas if not isinstance(x, bf.Or)]
+			# If one is false, false must be returned.
+			if any([x for x in formulas if isinstance(x, bf.Fls)]):
+				return bf.Fls
+			# Remove all trues
+			formulas = [x for x in formulas if not isinstance(x, bf.Tru)]
 			# TODO: needs to be implemented
 			return bf.And(sorted(formulas))
 
 
+def replace(values, p):
+	"""
+	Replaces all of the occurrences of the Vars that are represented by the keys in the values dictionary with the value
+	located in the dictionary (key - name of Var, value - value of Var). If a Var with the name isn't defined with a key
+	in the dictionary, the Var isn't replaced.
+	"""
+	if isinstance(p, bf.Var):
+		value = p.evaluate(values)
+		if value is None:
+			return p
+		else:
+			return value
+	elif isinstance(p, bf.Or):
+		return bf.Or([replace(values, x) for x in p.formulas])
+	elif isinstance(p, bf.And):
+		return bf.And([replace(values, x) for x in p.formulas])
+	else:
+		return p
+
 def evaluate(values, p):
 	"""
-	Evaluate the specified p formula with the specified values.
+	Evaluate the specified p formula with the specified values. All of the Vars in the p formula need to be defined in
+	the dictionary of values (key - name of Var, value - value of Var).
 	"""
 	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls):
 		return p.evaluate()
