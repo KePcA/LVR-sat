@@ -17,18 +17,18 @@ def cnf(p):
 	elif isinstance(p, bf.Or):
 		f_length = len(p.formulas)
 		if f_length == 0:
-			return bf.Fls
+			return bf.Fls()
 		elif f_length == 1:
-			return p.formulas[0]
+			return cnf(p.formulas[0])
 		else:
 			flattened = flatten(p)
-			flattened_cnf = [cnf(x) for x in flattened]
-			ands = [x for x in flattened_cnf if isinstance(x, bf.And)]
-			if len(flattened_cnf) == len(ands):
-				return bf.And(ands)
+			flattened_cnf = [cnf(x) for x in flattened.formulas]
+			conjunctions = [x for x in flattened_cnf if isinstance(x, bf.And)]
+			disjunctions = [x for x in flattened_cnf if not isinstance(x, bf.And)]
+			if len(flattened_cnf) == len(disjunctions):
+				return bf.Or(disjunctions)
 			else:
-				others = [x for x in flattened_cnf if not isinstance(x, bf.And)]
-				return flatten(bf.And([cnf(bf.Or(ands + [x] + others[:1])) for x in others[0].formulas]))
+				return flatten(bf.And([cnf(bf.Or([x] + disjunctions + conjunctions[1:])) for x in conjunctions[0].formulas]))
 	else:
 		return p
 
@@ -57,7 +57,7 @@ def flatten(p):
 		flattened = [flatten(x) for x in p.formulas]
 		length = len(flattened)
 		if length == 0:
-			return bf.Fls
+			return bf.Fls()
 		elif length == 1:
 			return flattened[0]
 		else:
@@ -70,7 +70,7 @@ def flatten(p):
 		flattened = [flatten(x) for x in p.formulas]
 		length = len(flattened)
 		if length == 0:
-			return bf.Tru
+			return bf.Tru()
 		elif length == 1:
 			return flattened[0]
 		else:
@@ -198,6 +198,8 @@ def replace(values, p):
 		return bf.And([replace(values, x) for x in p.formulas])
 	elif isinstance(p, bf.Not):
 		return bf.Not(replace(values, p.formula))
+	else:
+		return p
 
 
 def evaluate(values, p):
@@ -206,7 +208,7 @@ def evaluate(values, p):
 	the dictionary of values (key - name of Var, value - value of Var).
 	"""
 	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls):
-		return p.evaluate()
+		return p.evaluate(values)
 	elif isinstance(p, bf.Var):
 		return p.evaluate(values)
 	elif isinstance(p, bf.Not):
