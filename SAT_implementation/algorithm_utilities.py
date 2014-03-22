@@ -136,90 +136,100 @@ def simplify(p):
 			# And(y1,...,yn) -> Or(Not(y1),...Not(yn))
 			return simplify(bf.Or([bf.Not(y) for y in x.formulas]))
 	elif isinstance(p, bf.Or):
-		simplified = [simplify(x) for x in p.formulas]
+		# Simplify sub-formulas
+		simplified = map(simplify, p.formulas)
+		# Merge and remove duplicates.
 		formulas = remove_duplicates(sum([x.formulas if isinstance(x, bf.Or) else [x] for x in simplified], []))
 		length = len(formulas)
 		if length == 0:
-			return bf.Fls
+			return bf.Fls()
 		if length == 1:
 			return formulas[0]
 		else:
+			# Find all of the or absorptions
+			absorption, absorption_tuples = __find_absorptions(formulas, bf.And)
+			# Remove all of the absorptions
+			formulas = filter(lambda x: x not in absorption, formulas)
+			# Extend the list wit new absorptions
+			formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
+			# Remove duplicates
+			formulas = remove_duplicates(formulas)
+			# Remove all falses
+			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
+			# If one is true, true must be returned.
 			if any([x for x in formulas if isinstance(x, bf.Tru)]):
-				return bf.Tru
-			formulas = [x for x in formulas if not isinstance(x, bf.Fls)]
-
-			# TODO: needs to be implemented
-
-			return simplify(bf.Or(sorted(formulas)))
+				return bf.Tru()
+			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return true
+			if any([x.formula in formulas for x in formulas if isinstance(x, bf.Not)]):
+				return bf.Tru()
+			# Recheck current length of formulas
+			length = len(formulas)
+			if length == 0:
+				return bf.Tru()
+			if length == 1:
+				return formulas[0]
+			else:
+				return bf.Or(sorted(formulas))
 	elif isinstance(p, bf.And):
-		simplified = [simplify(x) for x in p.formulas]
+		# Simplify sub-formulas
+		simplified = map(simplify, p.formulas)
+		# Merge and remove duplicates.
 		formulas = remove_duplicates(sum([x.formulas if isinstance(x, bf.And) else [x] for x in simplified], []))
 		length = len(formulas)
 		if length == 0:
-			return bf.Tru
+			return bf.Tru()
 		if length == 1:
 			return formulas[0]
 		else:
-			absorption = [x for x in formulas if not isinstance(x, bf.Or)]
+			# Find all of the and absorptions
+			absorption, absorption_tuples = __find_absorptions(formulas, bf.Or)
+			# Remove all of the absorptions
+			formulas = filter(lambda x: x not in absorption, formulas)
+			# Extend the list wit new absorptions
+			formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
+			# Remove duplicates
+			formulas = remove_duplicates(formulas)
+			# Remove all trues
+			formulas = filter(lambda x: not isinstance(x, bf.Tru), formulas)
 			# If one is false, false must be returned.
 			if any([x for x in formulas if isinstance(x, bf.Fls)]):
-				return bf.Fls
-			# Remove all trues
-			formulas = [x for x in formulas if not isinstance(x, bf.Tru)]
-			# TODO: needs to be implemented
-			return simplify(bf.And(sorted(formulas)))
+				return bf.Fls()
+			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return false
+			if any([x.formula in formulas for x in formulas if isinstance(x, bf.Not)]):
+				return bf.Fls()
+			# Recheck current length of formulas
+			length = len(formulas)
+			if length == 0:
+				return bf.Tru()
+			if length == 1:
+				return formulas[0]
+			else:
+				return bf.And(sorted(formulas))
+
+
+def __find_absorptions(lst, class_value):
+	"""
+	Finds all of the absorptions fo the specified class_value and adds them to a list. Besides the list a list of tuples
+	(x, absorb) is returned.
+	"""
+	absorptions = []
+	absorption_tuples = []
+	for x in lst:
+		if isinstance(x, class_value):
+			tmp = []
+			for y in lst:
+				if isinstance(y, bf.Not) and y.formula in x.formulas:
+					tmp.append(y)
+				elif bf.Not(y) in x.formulas:
+					tmp.append(bf.Not(y))
+			if len(tmp) != 0:
+				absorptions.append(x)
+				absorption_tuples.append((x, tmp))
+	return absorptions, absorption_tuples
 
 
 def remove_duplicates(lst):
 	"""
 	Removes the duplicates from the specified list.
 	"""
-	result = []
-	for x in lst:
-		if x not in result:
-			result.append(x)
-	return result
-
-def replace(values, p):
-	"""
-	Replaces all of the occurrences of the Vars that are represented by the keys in the values dictionary with the value
-	located in the dictionary (key - name of Var, value - value of Var). If a Var with the name isn't defined with a key
-	in the dictionary, the Var isn't replaced.
-	"""
-	if isinstance(p, bf.Var):
-		value = p.evaluate(values)
-		if value is None:
-			return p
-		else:
-			return value
-	elif isinstance(p, bf.Or):
-		return bf.Or([replace(values, x) for x in p.formulas])
-	elif isinstance(p, bf.And):
-		return bf.And([replace(values, x) for x in p.formulas])
-	elif isinstance(p, bf.Not):
-		return bf.Not(replace(values, p.formula))
-	else:
-		return p
-
-
-def evaluate(values, p):
-	"""
-	Evaluate the specified p formula with the specified values. All of the Vars in the p formula need to be defined in
-	the dictionary of values (key - name of Var, value - value of Var).
-	"""
-	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls):
-		return p.evaluate(values)
-	elif isinstance(p, bf.Var):
-		return p.evaluate(values)
-	elif isinstance(p, bf.Not):
-		return not evaluate(values, p.formula)
-	elif isinstance(p, bf.Or):
-		for x in p.formulas:
-			if evaluate(values, x) is True:
-				return True
-		return False
-	elif isinstance(p, bf.And):
-		for x in p.formulas:
-			if evaluate(values, x) is False:
-				return False
-		return True
+	return [lst[i] for i, x in enumerate(lst) if x not in lst[i + 1:]]
