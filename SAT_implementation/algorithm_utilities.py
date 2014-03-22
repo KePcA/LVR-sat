@@ -22,13 +22,16 @@ def cnf(p):
 			return cnf(p.formulas[0])
 		else:
 			flattened = flatten(p)
-			flattened_cnf = [cnf(x) for x in flattened.formulas]
-			conjunctions = [x for x in flattened_cnf if isinstance(x, bf.And)]
-			disjunctions = [x for x in flattened_cnf if not isinstance(x, bf.And)]
-			if len(flattened_cnf) == len(disjunctions):
-				return bf.Or(disjunctions)
+			if isinstance(flattened, bf.Or) or isinstance(flattened, bf.And):
+				flattened_cnf = [cnf(x) for x in flattened.formulas]
+				conjunctions = [x for x in flattened_cnf if isinstance(x, bf.And)]
+				disjunctions = [x for x in flattened_cnf if not isinstance(x, bf.And)]
+				if len(flattened_cnf) == len(disjunctions):
+					return bf.Or(disjunctions)
+				else:
+					return flatten(bf.And([cnf(bf.Or([x] + disjunctions + conjunctions[1:])) for x in conjunctions[0].formulas]))
 			else:
-				return flatten(bf.And([cnf(bf.Or([x] + disjunctions + conjunctions[1:])) for x in conjunctions[0].formulas]))
+				return flattened
 	else:
 		return p
 
@@ -47,10 +50,10 @@ def flatten(p):
 			return flatten(x.formula)
 		elif isinstance(x, bf.Or):
 			# Convert to And(Not(y1), ...,Not(yn)) and flatten the formula.
-			return flatten(bf.And(bf.Not(y) for y in x.formulas))
+			return flatten(bf.And([bf.Not(y) for y in x.formulas]))
 		elif isinstance(x, bf.And):
 			# Convert to Or(Not(y1), ...,Not(yn)) and flatten the formula.
-			return flatten(bf.Or(bf.Not(y) for y in x.formulas))
+			return flatten(bf.Or([bf.Not(y) for y in x.formulas]))
 		else:
 			return p
 	elif isinstance(p, bf.Or):
@@ -62,7 +65,7 @@ def flatten(p):
 			return flattened[0]
 		else:
 			formulas = sum([x.formulas if isinstance(x, bf.Or) else [x] for x in flattened], [])
-			if any([isinstance(x, bf.And) and len(x.formulas) == 0 for x in formulas]):
+			if __any(formulas, lambda x: isinstance(x, bf.Tru)):
 				return bf.Tru()
 			else:
 				return bf.Or(formulas)
@@ -75,7 +78,7 @@ def flatten(p):
 			return flattened[0]
 		else:
 			formulas = sum([x.formulas if isinstance(x, bf.And) else [x] for x in flattened], [])
-			if any([isinstance(x, bf.Or) and len(x.formulas) == 0 for x in formulas]):
+			if __any(formulas, lambda x: isinstance(x, bf.Fls)):
 				return bf.Fls()
 			else:
 				return bf.And(formulas)
@@ -98,13 +101,13 @@ def nnf(p):
 		elif isinstance(x, bf.Not):
 			return nnf(x.formula)
 		elif isinstance(x, bf.Or):
-			return bf.And([nnf(bf.Not(y)) for y in x.formulas])
+			return bf.And(map(lambda y: nnf(bf.Not(y)), x.formulas))
 		elif isinstance(x, bf.And):
-			return bf.Or([nnf(bf.Not(y)) for y in x.formulas])
+			return bf.Or(map(lambda y: nnf(bf.Not(y)), x.formulas))
 	elif isinstance(p, bf.Or):
-			return bf.Or([nnf(x) for x in p.formulas])
+			return bf.Or(map(nnf, p.formulas))
 	elif isinstance(p, bf.And):
-			return bf.And([nnf(x) for x in p.formulas])
+			return bf.And(map(nnf, p.formulas))
 
 
 def simplify(p):
@@ -157,11 +160,11 @@ def simplify(p):
 			# Remove all falses
 			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
 			# If one is true, true must be returned.
-			if any([x for x in formulas if isinstance(x, bf.Tru)]):
+			if __any(formulas, lambda x: isinstance(x, bf.Tru)):
 				return bf.Tru()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return true
-			if any([x.formula in formulas for x in formulas if isinstance(x, bf.Not)]):
-				return bf.Tru()
+			if __any(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
+					return bf.Tru()
 			# Recheck current length of formulas
 			length = len(formulas)
 			if length == 0:
@@ -192,10 +195,10 @@ def simplify(p):
 			# Remove all trues
 			formulas = filter(lambda x: not isinstance(x, bf.Tru), formulas)
 			# If one is false, false must be returned.
-			if any([x for x in formulas if isinstance(x, bf.Fls)]):
+			if __any(formulas, lambda x: isinstance(x, bf.Fls)):
 				return bf.Fls()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return false
-			if any([x.formula in formulas for x in formulas if isinstance(x, bf.Not)]):
+			if __any(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
 				return bf.Fls()
 			# Recheck current length of formulas
 			length = len(formulas)
@@ -227,6 +230,18 @@ def __find_absorptions(lst, class_value):
 				absorption_tuples.append((x, tmp))
 	return absorptions, absorption_tuples
 
+
+def __any(formulas, funct):
+	"""
+	Implementation of a method that receives a list of values and a function. It iterates over the values and calls the
+	function with every element in the list. If the return of the function is equal to True, True is returned. If no
+	element is found in the list that satisfies the function, False is returned. Better then the integrated any function
+	because it stops when an element is found, the any function doesn't. Worst case scenario is that we take O(n) time.
+	"""
+	for x in formulas:
+		if funct(x):
+			return True
+	return False
 
 def remove_duplicates(lst):
 	"""

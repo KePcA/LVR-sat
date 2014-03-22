@@ -33,5 +33,13 @@ class cnf_unit_test(unittest.TestCase):
 		result = bf.And([bf.Var("a"), bf.Or([bf.Var("c"), bf.Var("b")]),  bf.Or([bf.Var("d"), bf.Var("b")])])
 		self.assertEqual(result, au.cnf_nnf(formula))
 
+	def test_conversion_to_cnf_with_true_in_or(self):
+		formula = bf.Not(bf.And([bf.Var("a"), bf.Var("b"), bf.Not(bf.Tru())]))
+		self.assertEqual(bf.Tru(), au.cnf_nnf(formula))
+
+	def test_conversion_to_cnf_with_false_in_and(self):
+		formula = bf.Not(bf.Or([bf.Var("a"), bf.Var("b"), bf.Not(bf.Fls())]))
+		self.assertEqual(bf.Fls(), au.cnf_nnf(formula))
+
 if __name__ == '__main__':
 	unittest.main()
