@@ -13,7 +13,7 @@ def cnf(p):
 	Converts the specified p formula to a CNF form.
 	"""
 	if isinstance(p, bf.And):
-		return flatten(bf.And([cnf(x) for x in p.formulas]))
+		return flatten(bf.And(map(lambda x: cnf(x), p.formulas)))
 	elif isinstance(p, bf.Or):
 		f_length = len(p.formulas)
 		if f_length == 0:
@@ -23,13 +23,13 @@ def cnf(p):
 		else:
 			flattened = flatten(p)
 			if isinstance(flattened, bf.Or) or isinstance(flattened, bf.And):
-				flattened_cnf = [cnf(x) for x in flattened.formulas]
-				conjunctions = [x for x in flattened_cnf if isinstance(x, bf.And)]
-				disjunctions = [x for x in flattened_cnf if not isinstance(x, bf.And)]
+				flattened_cnf = map(lambda x: cnf(x), flattened.formulas)
+				disjunctions = filter(lambda x: not isinstance(x, bf.And), flattened_cnf)
 				if len(flattened_cnf) == len(disjunctions):
 					return bf.Or(disjunctions)
 				else:
-					return flatten(bf.And([cnf(bf.Or([x] + disjunctions + conjunctions[1:])) for x in conjunctions[0].formulas]))
+					conjunctions = filter(lambda x: isinstance(x, bf.And), flattened_cnf)
+					return flatten(bf.And(map(lambda x: cnf(bf.Or([x] + disjunctions + conjunctions[1:])), conjunctions[0].formulas)))
 			else:
 				return flattened
 	else:
@@ -46,18 +46,18 @@ def flatten(p):
 	if isinstance(p, bf.Not):
 		x = p.formula
 		if isinstance(x, bf.Not):
-			# Get rid of not, return the flattened formula.
+			# Get rid of Not, return the flattened formula.
 			return flatten(x.formula)
 		elif isinstance(x, bf.Or):
 			# Convert to And(Not(y1), ...,Not(yn)) and flatten the formula.
-			return flatten(bf.And([bf.Not(y) for y in x.formulas]))
+			return flatten(bf.And(map(lambda y: bf.Not(y), x.formulas)))
 		elif isinstance(x, bf.And):
 			# Convert to Or(Not(y1), ...,Not(yn)) and flatten the formula.
-			return flatten(bf.Or([bf.Not(y) for y in x.formulas]))
+			return flatten(bf.Or(map(lambda y: bf.Not(y), x.formulas)))
 		else:
 			return p
 	elif isinstance(p, bf.Or):
-		flattened = [flatten(x) for x in p.formulas]
+		flattened = map(lambda x: flatten(x), p.formulas)
 		length = len(flattened)
 		if length == 0:
 			return bf.Fls()
@@ -65,12 +65,12 @@ def flatten(p):
 			return flattened[0]
 		else:
 			formulas = sum([x.formulas if isinstance(x, bf.Or) else [x] for x in flattened], [])
-			if __any(formulas, lambda x: isinstance(x, bf.Tru)):
+			if __any__(formulas, lambda x: isinstance(x, bf.Tru)):
 				return bf.Tru()
 			else:
 				return bf.Or(formulas)
 	elif isinstance(p, bf.And):
-		flattened = [flatten(x) for x in p.formulas]
+		flattened = map(lambda x: flatten(x), p.formulas)
 		length = len(flattened)
 		if length == 0:
 			return bf.Tru()
@@ -78,7 +78,7 @@ def flatten(p):
 			return flattened[0]
 		else:
 			formulas = sum([x.formulas if isinstance(x, bf.And) else [x] for x in flattened], [])
-			if __any(formulas, lambda x: isinstance(x, bf.Fls)):
+			if __any__(formulas, lambda x: isinstance(x, bf.Fls)):
 				return bf.Fls()
 			else:
 				return bf.And(formulas)
@@ -134,10 +134,10 @@ def simplify(p):
 			return simplify(x.formula)
 		elif isinstance(x, bf.Or):
 			# Or(y1,...,yn) -> And(Not(y1),...Not(yn))
-			return simplify(bf.And([bf.Not(y) for y in x.formulas]))
+			return simplify(bf.And(map(lambda y: bf.Not(y), x.formulas)))
 		elif isinstance(x, bf.And):
 			# And(y1,...,yn) -> Or(Not(y1),...Not(yn))
-			return simplify(bf.Or([bf.Not(y) for y in x.formulas]))
+			return simplify(bf.Or(map(lambda y: bf.Not(y), x.formulas)))
 	elif isinstance(p, bf.Or):
 		# Simplify sub-formulas
 		simplified = map(simplify, p.formulas)
@@ -150,7 +150,7 @@ def simplify(p):
 			return formulas[0]
 		else:
 			# Find all of the or absorptions
-			absorption, absorption_tuples = __find_absorptions(formulas, bf.And)
+			absorption, absorption_tuples = __find_absorptions__(formulas, bf.And)
 			# Remove all of the absorptions
 			formulas = filter(lambda x: x not in absorption, formulas)
 			# Extend the list wit new absorptions
@@ -160,10 +160,10 @@ def simplify(p):
 			# Remove all falses
 			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
 			# If one is true, true must be returned.
-			if __any(formulas, lambda x: isinstance(x, bf.Tru)):
+			if __any__(formulas, lambda x: isinstance(x, bf.Tru)):
 				return bf.Tru()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return true
-			if __any(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
+			if __any__(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
 					return bf.Tru()
 			# Recheck current length of formulas
 			length = len(formulas)
@@ -185,7 +185,7 @@ def simplify(p):
 			return formulas[0]
 		else:
 			# Find all of the and absorptions
-			absorption, absorption_tuples = __find_absorptions(formulas, bf.Or)
+			absorption, absorption_tuples = __find_absorptions__(formulas, bf.Or)
 			# Remove all of the absorptions
 			formulas = filter(lambda x: x not in absorption, formulas)
 			# Extend the list wit new absorptions
@@ -195,10 +195,10 @@ def simplify(p):
 			# Remove all trues
 			formulas = filter(lambda x: not isinstance(x, bf.Tru), formulas)
 			# If one is false, false must be returned.
-			if __any(formulas, lambda x: isinstance(x, bf.Fls)):
+			if __any__(formulas, lambda x: isinstance(x, bf.Fls)):
 				return bf.Fls()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return false
-			if __any(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
+			if __any__(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
 				return bf.Fls()
 			# Recheck current length of formulas
 			length = len(formulas)
@@ -210,7 +210,7 @@ def simplify(p):
 				return bf.And(sorted(formulas))
 
 
-def __find_absorptions(lst, class_value):
+def __find_absorptions__(lst, class_value):
 	"""
 	Finds all of the absorptions fo the specified class_value and adds them to a list. Besides the list a list of tuples
 	(x, absorb) is returned.
@@ -231,7 +231,7 @@ def __find_absorptions(lst, class_value):
 	return absorptions, absorption_tuples
 
 
-def __any(formulas, funct):
+def __any__(formulas, funct):
 	"""
 	Implementation of a method that receives a list of values and a function. It iterates over the values and calls the
 	function with every element in the list. If the return of the function is equal to True, True is returned. If no
