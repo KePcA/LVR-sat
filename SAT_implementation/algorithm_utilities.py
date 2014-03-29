@@ -243,8 +243,29 @@ def __any__(formulas, funct):
 			return True
 	return False
 
+
+def extract_variables(p):
+	"""
+	Extracts all of the variables that occur in the specified formula, removes the duplicates and sorts the result.
+	"""
+	def local_extract_variables(p):
+		"""
+		Extracts all of the variables that occur in the specified formula and removes the duplicates.
+		"""
+		if isinstance(p, bf.Tru) or isinstance(p, bf.Fls):
+			return []
+		elif isinstance(p, bf.Not):
+			return local_extract_variables(p.formula)
+		elif isinstance(p, bf.Or) or isinstance(p, bf.And):
+			return remove_duplicates(sum(map(lambda x: local_extract_variables(x), p.formulas), []))
+		elif isinstance(p, bf.Var):
+			return [p.name]
+	return sorted(local_extract_variables(p))
+
+
+
 def remove_duplicates(lst):
 	"""
-	Removes the duplicates from the specified list.
+	Returns a copy of the specified list that contains no duplicates.
 	"""
 	return [lst[i] for i, x in enumerate(lst) if x not in lst[i + 1:]]

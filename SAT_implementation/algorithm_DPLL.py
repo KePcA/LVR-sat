@@ -106,32 +106,6 @@ def all_variables(CNF_formula):
     return au.remove_duplicates(variables)
 """
 
-#Returns all variables which occur in formula
-def all_variables_gen(formula):
-
-    if isinstance(formula, bf.Tru):
-        return []
-
-    elif isinstance(formula, bf.Fls):
-        return []
-
-    elif isinstance(formula, bf.Not):
-        return all_variables_gen(formula.formula)
-
-    elif isinstance(formula, bf.Or):
-        variables = []
-        for clause in formula.formulas:
-            variables.extend(all_variables_gen(clause))
-        return au.remove_duplicates(variables)
-
-    elif isinstance(formula, bf.And):
-        variables = []
-        for clause in formula.formulas:
-            variables.extend(all_variables_gen(clause))
-        return au.remove_duplicates(variables)
-
-    elif isinstance(formula, bf.Var):
-        return [formula.name]
 
 #Solves SAT problem by trying all the possibilities for variables in formula - WORKING
 def SAT_solver_brute_force(CNF_formula, dictionary):
@@ -145,7 +119,7 @@ def SAT_solver_brute_force(CNF_formula, dictionary):
 
     else:
         #Take first variable and set its value to True
-        variables = all_variables_gen(CNF_formula)
+        variables = au.extract_variables(CNF_formula)
         dictionary[variables[0]] = bf.Tru()
         simplified_formula = CNF_formula.replace(dictionary)
         simplified_formula = au.simplify(simplified_formula)
