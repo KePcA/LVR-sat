@@ -15,46 +15,51 @@ import algorithm_utilities as au
 def DPLL(formula):
 
     CNF_formula = au.cnf_nnf(formula)
-
-    """
-    if not isinstance(CNF_formula, bf.And):
-        raise Exception("Formula not in CNF form - CNF is not type of AND!")
-    """
     values = {}
+    while True:
 
-    for clause in CNF_formula.formulas:
+        #Formula is only True, False, Var or negated Var - no more pure vars / literals, we finished
+        if isinstance(CNF_formula, bf.Tru) or isinstance(CNF_formula, bf.Fls) or isinstance(CNF_formula, bf.Var) or isinstance(CNF_formula, bf.Not): break
 
-        #First check if clause is instance of OR - it has to be otherwise formula is not in CNF
-        """
-        if not isinstance(clause, bf.Or):
-            raise Exception("Formula is not in CNF - clause is not type of OR!")
-        """
-        #Check if clause is empty - has no variables. It returns false and formula is not satisfiable
-        """
-        if clause.isEmpty():
-            raise Exception("Cannot be empty!")
-        """
-        #Check if it is type of unit clause - only one literal.
-        if isinstance(clause, bf.Var):
-            values[clause.name] = bf.Tru()
+        temp_value = {}
+        for clause in CNF_formula.formulas:
 
-        elif isinstance(clause, bf.Not):
-            values[clause.formula.name] = bf.Fls()
+            #It is only literal - Var
+            if isinstance(clause, bf.Var):
+                values[clause.name] = bf.Tru()
+                temp_value[clause.name] = bf.Tru()
+                break
 
-            """
-            #Variable without negation - value is True
-            if isinstance(literal, bf.Var):
-                values[literal.name] = bf.Tru()
-            #Variable is negated - value is False
-            else:
-                values[literal.formula.name] = bf.Fls()
-            """
+            #It is only literal - negated Var
+            elif isinstance(clause, bf.Not):
+                values[clause.formula.name] = bf.Fls()
+                temp_value[clause.formula.name] = bf.Fls()
+                break
 
+        #We found literal - replace formula with its value, simplify, put in cnf and look for literal again
+        if temp_value:
+            replaced_formula = CNF_formula.replace(temp_value)
+            formula_simplified = au.simplify(replaced_formula)
+            CNF_formula = au.cnf_nnf(formula_simplified)
+        #finish, no more literals
+        else:
+            break
+
+
+    print CNF_formula
+
+    """
     replaced_formula = CNF_formula.replace(values)
-    formula_simplified = au.simplify(replaced_formula)
-    formula_cnf = au.cnf_nnf(formula_simplified)
+    print replaced_formula
 
-    values_brute_force = SAT_solver_brute_force(formula_cnf, {})
+    formula_simplified = au.simplify(replaced_formula)
+    print formula_simplified
+
+    formula_cnf = au.cnf_nnf(formula_simplified)
+    print formula_cnf
+    """
+
+    values_brute_force = SAT_solver_brute_force(CNF_formula, {})
 
 
     return dict(values.items() + values_brute_force.items())
@@ -184,9 +189,9 @@ def DPLL_simpify(CNF_formula, dict):
 q = bf.Var("q")
 p = bf.Var("p")
 r = bf.Var("r")
-test_CNF_formula = bf.And([bf.Or([q,p, r]), bf.Or([bf.Not(p), bf.Not(r)]), bf.Or([bf.Not(q)])])
-
-test_CNF_formula.__repr__()
+test_CNF_formula_1 = bf.And([bf.Or([q,p, r]), bf.Or([bf.Not(p), bf.Not(r)]), bf.Or([bf.Not(q)])])
+test_CNF_formula_2 = bf.And([bf.Not(p), bf.Or([p,bf.Not(q)]), bf.Or([p,q,r])])
+#test_CNF_formula.__repr__()
 
 dictionary = {}
 
@@ -197,8 +202,15 @@ dictionary = {}
 
 #solve_dict = SAT_solver_brute_force(test_CNF_formula, dictionary)
 #print solve_dict
+print '\n'
 
-print DPLL(test_CNF_formula)
+print DPLL(test_CNF_formula_1)
+
+print '\n'
+
+print DPLL(test_CNF_formula_2)
+
+#print au.extract_variables(test_CNF_formula_1)
 
 """
 (values, formula) = DPLL(test_CNF_formula)

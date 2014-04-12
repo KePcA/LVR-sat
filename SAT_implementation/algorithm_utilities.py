@@ -269,3 +269,12 @@ def remove_duplicates(lst):
 	Returns a copy of the specified list that contains no duplicates.
 	"""
 	return [lst[i] for i, x in enumerate(lst) if x not in lst[i + 1:]]
+
+
+"""
+def pure_variables(var_name, cnf_formula):
+    all_vars = extract_variables(cnf_formula)
+    for clause in cnf_formula.formulas:
+        if isinstance(clause, bf.Or):
+"""
+
