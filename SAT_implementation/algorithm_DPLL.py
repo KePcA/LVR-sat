@@ -45,71 +45,17 @@ def DPLL(formula):
         else:
             break
 
-
-    print CNF_formula
-
-    """
-    replaced_formula = CNF_formula.replace(values)
-    print replaced_formula
-
+    #Check for pure variables
+    pure_var_values = au.pure_variables(CNF_formula)
+    replaced_formula = CNF_formula.replace(pure_var_values)
     formula_simplified = au.simplify(replaced_formula)
-    print formula_simplified
+    CNF_formula = au.cnf_nnf(formula_simplified)
 
-    formula_cnf = au.cnf_nnf(formula_simplified)
-    print formula_cnf
-    """
-
+    #Solve the rest of formula by brute force
     values_brute_force = SAT_solver_brute_force(CNF_formula, {})
 
+    return dict(values.items() + pure_var_values.items() + values_brute_force.items())
 
-    return dict(values.items() + values_brute_force.items())
-
-
-#Returns all different variables which are found in formula
-"""
-def all_variables(CNF_formula):
-    print CNF_formula
-    #CNF_formula has to be type of AND
-    if not isinstance(CNF_formula, bf.And):
-        raise Exception("Formula not in CNF form - CNF is not type of AND!")
-
-    variables = []
-
-    #Iterate over each clause in CNF_formula, which has to be OR!
-    for clause in CNF_formula.formulas:
-
-        #Exception if clause is not type of OR
-        if not isinstance(clause, bf.Or):
-            raise Exception("Formula not in CNF form - clause is not type of OR!")
-
-        #Iterate over variables in clause - it should only be variables or negations of variable
-        for var in clause.formulas:
-
-            #We found variable - adding into set (no repetitions)
-            if isinstance(var, bf.Var):
-                variables.append(var.name)
-
-            #We found negation
-            elif isinstance(var, bf.Not):
-
-                #Inside negation is not variable - formula is not simplified nor in CNF
-                if not isinstance(var.formula, bf.Var):
-                    raise Exception("Formula is not simplified!")
-
-                #Inside negation is variable - adding into set (no repetitions)
-                else:
-                    variables.append(var.formula.name)
-
-            #We found OR or AND - formula is not simplified nor in CNF
-            elif isinstance(var, bf.Or) or isinstance(var, bf.Not):
-                raise Exception("Formula is not in CNF form inside the clause(should be only variables or not variables)!")
-
-            #Only option left is True or False - not simplified
-            else:
-                raise Exception("Formula is not simplified inside the clause!")
-
-    return au.remove_duplicates(variables)
-"""
 
 
 #Solves SAT problem by trying all the possibilities for variables in formula - WORKING
@@ -143,81 +89,26 @@ def SAT_solver_brute_force(CNF_formula, dictionary):
 
 
 
-
-
-
-
 """
-def DPLL_simpify(CNF_formula, dict):
-
-    remove = False
-
-    new_formula = bf.And([])
-
-    for clause in CNF_formula.formulas:
-
-        formula_OR = bf.Or([])
-
-        #First check if clause is instance of OR - it has to be otherwise formula is not in CNF
-        if not isinstance(clause, bf.Or):
-            raise Exception("Formula is not in CNF!")
-
-        for literal in clause.formulas:
-            try:
-                evaluation = literal.valuate(dict)
-                if evaluation:
-                    remove = True
-                    break
-                else:
-                    #Removing literal of value false - if it was the last one, formula is not satisfiable - NOT WORKING!!!
-                    clause.formulas.remove(literal)
-                    if len(clause.formulas)==0:
-                        return False
-            except:
-                formula_OR.formulas.append(literal)
-
-
-        if remove:
-            remove = False
-        else:
-            new_formula.formulas.append(formula_OR)
-
-    return new_formula
+TESTING
 """
-
-
 q = bf.Var("q")
 p = bf.Var("p")
 r = bf.Var("r")
 test_CNF_formula_1 = bf.And([bf.Or([q,p, r]), bf.Or([bf.Not(p), bf.Not(r)]), bf.Or([bf.Not(q)])])
 test_CNF_formula_2 = bf.And([bf.Not(p), bf.Or([p,bf.Not(q)]), bf.Or([p,q,r])])
-#test_CNF_formula.__repr__()
+test_CNF_formula_3 = bf.And([bf.Or([p,q,r]), bf.Or([p,bf.Not(q),r])])
 
 dictionary = {}
 
-#replaced_formula = au.replace(dictionary, test_CNF_formula)
-#print replaced_formula
-
-#print all_variables_gen(test_CNF_formula)
-
-#solve_dict = SAT_solver_brute_force(test_CNF_formula, dictionary)
-#print solve_dict
 print '\n'
-
+print(test_CNF_formula_1)
 print DPLL(test_CNF_formula_1)
-
 print '\n'
-
+print(test_CNF_formula_2)
 print DPLL(test_CNF_formula_2)
-
-#print au.extract_variables(test_CNF_formula_1)
-
-"""
-(values, formula) = DPLL(test_CNF_formula)
-print values
-print formula.__repr__()
+print '\n'
+print(test_CNF_formula_3)
+print DPLL(test_CNF_formula_3)
 
 
-variables = all_variables(test_CNF_formula)
-print variables
-"""

@@ -271,10 +271,43 @@ def remove_duplicates(lst):
 	return [lst[i] for i, x in enumerate(lst) if x not in lst[i + 1:]]
 
 
-"""
-def pure_variables(var_name, cnf_formula):
-    all_vars = extract_variables(cnf_formula)
-    for clause in cnf_formula.formulas:
-        if isinstance(clause, bf.Or):
-"""
+def pure_variables(cnf_formula):
+    """
+    Checks for pure variables in CNF formula and returns appropriate values assigned
+    """
+    if isinstance(cnf_formula, bf.Tru) or isinstance(cnf_formula, bf.Fls) or isinstance(cnf_formula, bf.Var) or isinstance(cnf_formula, bf.Not): return {}
+
+    pure_variables = []
+    not_pure = []
+    for clause_OR in cnf_formula.formulas:
+        for var in clause_OR.formulas:
+            if isinstance(var, bf.Var):
+                if var.name in not_pure:
+                    continue
+                elif var in pure_variables:
+                    continue
+                elif bf.Not(var) in pure_variables:
+                    pure_variables.remove(bf.Not(var))
+                    not_pure.append(var.name)
+                else:
+                    pure_variables.append(var)
+            elif isinstance(var, bf.Not):
+                if var.formula.name in not_pure:
+                    continue
+                elif var in pure_variables:
+                    continue
+                elif var.formula in pure_variables:
+                    pure_variables.remove(var.formula)
+                    not_pure.append(var.formula.name)
+                else:
+                    pure_variables.append(var)
+    #Assing values to pure variables
+    values = {}
+    for pure_var in pure_variables:
+        if isinstance(pure_var, bf.Var):
+            values[pure_var.name] = bf.Tru()
+        elif isinstance(pure_var, bf.Not):
+            values[pure_var.formula.name] = bf.Fls()
+    return values
+
 
