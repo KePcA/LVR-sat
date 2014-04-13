@@ -17,7 +17,7 @@ def DPLL(formula):
     CNF_formula = au.cnf_nnf(formula)
     values = {}
     while True:
-
+        print CNF_formula
         #Formula is only True, False, Var or negated Var - no more pure vars / literals, we finished
         if isinstance(CNF_formula, bf.Tru) or isinstance(CNF_formula, bf.Fls) or isinstance(CNF_formula, bf.Var) or isinstance(CNF_formula, bf.Not): break
 
@@ -98,9 +98,11 @@ r = bf.Var("r")
 test_CNF_formula_1 = bf.And([bf.Or([q,p, r]), bf.Or([bf.Not(p), bf.Not(r)]), bf.Or([bf.Not(q)])])
 test_CNF_formula_2 = bf.And([bf.Not(p), bf.Or([p,bf.Not(q)]), bf.Or([p,q,r])])
 test_CNF_formula_3 = bf.And([bf.Or([p,q,r]), bf.Or([p,bf.Not(q),r])])
+test_CNF_formula_4 = bf.And([p, bf.Or([bf.Not(p), q]), bf.Or([bf.Not(p), bf.Not(q), bf.Not(r)])])
 
 dictionary = {}
 
+"""
 print '\n'
 print(test_CNF_formula_1)
 print DPLL(test_CNF_formula_1)
@@ -110,5 +112,6 @@ print DPLL(test_CNF_formula_2)
 print '\n'
 print(test_CNF_formula_3)
 print DPLL(test_CNF_formula_3)
-
+"""
+print DPLL(test_CNF_formula_4)
 
