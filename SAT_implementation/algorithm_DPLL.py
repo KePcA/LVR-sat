@@ -3,10 +3,8 @@
 """
 Implementation of DPLL algorithm for solving SAT problem
 """
-
-import bool_formulas as bf
-import algorithm_utilities as au
-
+from SAT_implementation import algorithm_utilities as au
+from SAT_implementation import bool_formulas as bf
 
 
 #Implementation of DPLL - argument is formula in CNF form. Returns False if formula is not in SAT or

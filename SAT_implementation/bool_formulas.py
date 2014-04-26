@@ -184,17 +184,3 @@ class Or():
 			return False
 		else:
 			return True
-
-
-
-"""
-variable_dictionary = {"q": True, "p": False, "r": True}
-
-q = Var("q")
-p = Var("p")
-r = Var("r")
-
-formula = Not(Or([And([Not(q), p, r]), Not(Or([q,Not(p),Tru()]))]))
-print formula.__repr__()
-print formula.valuate(variable_dictionary)
-"""

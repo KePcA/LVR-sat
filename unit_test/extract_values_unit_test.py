@@ -1,7 +1,8 @@
+from SAT_implementation import bool_formulas as bf
+
 __author__ = 'Grega'
 
 import unittest
-import bool_formulas as bf
 import SAT_implementation.algorithm_utilities as au
 
 
@@ -28,3 +29,4 @@ class extract_values_unit_test(unittest.TestCase):
 
 if __name__ == '__main__':
 	unittest.main()
+

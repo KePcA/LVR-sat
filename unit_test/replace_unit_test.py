@@ -1,7 +1,8 @@
+from SAT_implementation import bool_formulas as bf
+
 __author__ = 'Grega'
 
 import unittest
-import bool_formulas as bf
 
 
 class replace_unit_test(unittest.TestCase):

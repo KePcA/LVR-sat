@@ -1,4 +1,4 @@
-import bool_formulas as bf
+from SAT_implementation import bool_formulas as bf
 
 
 def cnf_nnf(p):
@@ -114,7 +114,7 @@ def simplify(p):
 	"""
 	Simplified the specified p formula.
 	"""
-	if (isinstance(p, bf.Tru)) or isinstance(p, bf.Fls) or isinstance(p, bf.Var):
+	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls) or isinstance(p, bf.Var):
 		# Values that can't be simplified any further.
 		return p
 	elif isinstance(p, bf.Not):
@@ -262,8 +262,6 @@ def extract_variables(p):
 			return [p.name]
 	return sorted(local_extract_variables(p))
 
-
-
 def remove_duplicates(lst):
 	"""
 	Returns a copy of the specified list that contains no duplicates.
@@ -272,42 +270,43 @@ def remove_duplicates(lst):
 
 
 def pure_variables(cnf_formula):
-    """
-    Checks for pure variables in CNF formula and returns appropriate values assigned
-    """
-    if isinstance(cnf_formula, bf.Tru) or isinstance(cnf_formula, bf.Fls) or isinstance(cnf_formula, bf.Var) or isinstance(cnf_formula, bf.Not): return {}
+	"""
+	Checks for pure variables in CNF formula and returns appropriate values assigned
+	"""
+	if isinstance(cnf_formula, bf.Tru) or isinstance(cnf_formula, bf.Fls) or isinstance(cnf_formula, bf.Var) or isinstance(cnf_formula, bf.Not):
+		return {}
 
-    pure_variables = []
-    not_pure = []
-    for clause_OR in cnf_formula.formulas:
-        for var in clause_OR.formulas:
-            if isinstance(var, bf.Var):
-                if var.name in not_pure:
-                    continue
-                elif var in pure_variables:
-                    continue
-                elif bf.Not(var) in pure_variables:
-                    pure_variables.remove(bf.Not(var))
-                    not_pure.append(var.name)
-                else:
-                    pure_variables.append(var)
-            elif isinstance(var, bf.Not):
-                if var.formula.name in not_pure:
-                    continue
-                elif var in pure_variables:
-                    continue
-                elif var.formula in pure_variables:
-                    pure_variables.remove(var.formula)
-                    not_pure.append(var.formula.name)
-                else:
-                    pure_variables.append(var)
-    #Assing values to pure variables
-    values = {}
-    for pure_var in pure_variables:
-        if isinstance(pure_var, bf.Var):
-            values[pure_var.name] = bf.Tru()
-        elif isinstance(pure_var, bf.Not):
-            values[pure_var.formula.name] = bf.Fls()
-    return values
+	pure_variables = []
+	not_pure = []
+	for clause_OR in cnf_formula.formulas:
+		for var in clause_OR.formulas:
+			if isinstance(var, bf.Var):
+				if var.name in not_pure:
+					continue
+				elif var in pure_variables:
+					continue
+				elif bf.Not(var) in pure_variables:
+					pure_variables.remove(bf.Not(var))
+					not_pure.append(var.name)
+				else:
+					pure_variables.append(var)
+			elif isinstance(var, bf.Not):
+				if var.formula.name in not_pure:
+					continue
+				elif var in pure_variables:
+					continue
+				elif var.formula in pure_variables:
+					pure_variables.remove(var.formula)
+					not_pure.append(var.formula.name)
+				else:
+					pure_variables.append(var)
+	#Assing values to pure variables
+	values = {}
+	for pure_var in pure_variables:
+		if isinstance(pure_var, bf.Var):
+			values[pure_var.name] = bf.Tru()
+		elif isinstance(pure_var, bf.Not):
+			values[pure_var.formula.name] = bf.Fls()
+	return values
 
 
