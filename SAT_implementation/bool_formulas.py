@@ -1,23 +1,31 @@
 #coding:utf-8
 
 """
-Implementacija razredov za predstavitev Boolovih formul
+Implementation of classes for the representation of a Boolean formula.
 """
 
-
-############## Class for representation of FALSE ########################
+########################################## Class for representation of FALSE ###########################################
 class Fls():
 
 	def __init__(self):
 		pass
 
 	def __repr__(self):
+		"""
+		Representation of FALSE.
+		"""
 		return "F"
 
 	def __eq__(self, other):
+		"""
+		Equality check.
+		"""
 		return isinstance(other, Fls)
 
 	def evaluate(self, dict):
+		"""
+		Always evaluates to False.
+		"""
 		return False
 
 	def replace(self, dict):
@@ -27,19 +35,28 @@ class Fls():
 		return self
 
 
-############## Class for representation of TRUE ########################
+########################################### Class for representation of TRUE ###########################################
 class Tru():
 
 	def __init__(self):
 		pass
 
 	def __repr__(self):
+		"""
+		Representation of TRUE.
+		"""
 		return "T"
 
 	def __eq__(self, other):
+		"""
+		Equality check.
+		"""
 		return isinstance(other, Tru)
 
 	def evaluate(self, dict):
+		"""
+		Always evaluates to True.
+		"""
 		return True
 
 	def replace(self, dict):
@@ -49,20 +66,31 @@ class Tru():
 		return self
 
 
-############## Class for representation of VARIABLE ########################
+######################################### Class for representation of VARIABLE #########################################
 class Var:
 
 	def __init__(self, name):
+		"""
+		Argument is the name of the variable.
+		"""
 		self.name = name
 
 	def __repr__(self):
+		"""
+		Representation of a VARIABLE.
+		"""
 		return self.name
 
 	def __eq__(self, other):
+		"""
+		Equality check.
+		"""
 		return isinstance(other, Var) and other.name == self.name
 
-	#Value of the variable is obtained from the dictionary (dict) in which values of all the variables are stored, if exists.
 	def evaluate(self, dict):
+		"""
+		Returns the variable contained in the specified dictionary or None if the variable doesn't exist.
+		"""
 		return dict.get(self.name).evaluate(dict)
 
 	def replace(self, dict):
@@ -78,21 +106,31 @@ class Var:
 			return value
 
 
-############## Class for representation of NEGATION ########################
+######################################### Class for representation of NEGATION #########################################
 class Not():
 
 	def __init__(self, formula):
+		"""
+		Argument is a representation of another boolean formula.
+		"""
 		self.formula = formula
 
-	#For string representation we add ¬ in front of out formula we negate.
 	def __repr__(self):
+		"""
+		Representation of NOT.
+		"""
 		return "¬" + repr(self.formula)
 
 	def __eq__(self, other):
+		"""
+		Equality check.
+		"""
 		return isinstance(other, Not) and self.formula == other.formula
 
-	#We return the negation of our formula which value we get from the dictionary of variables' values (dict).
 	def evaluate(self, dict):
+		"""
+		Returns the negation of our formula which value we get from the dictionary of variables' values (dict).
+		"""
 		return not self.formula.evaluate(dict)
 
 	def replace(self, dict):
@@ -103,16 +141,19 @@ class Not():
 		"""
 		return Not(self.formula.replace(dict))
 
-
-
-############## Class for representation of AND ########################
+########################################### Class for representation of AND ############################################
 class And():
 
-	#Argument formulas represents list of formulas which are combined to a single formula by conjunctions.
 	def __init__(self, formulas):
+		"""
+		Argument formulas represents list of formulas which are combined to a single formula by conjunctions.
+		"""
 		self.formulas = formulas
 
 	def __repr__(self):
+		"""
+		Representation of AND.
+		"""
 		string = ""
 		for i in xrange(len(self.formulas) - 1):
 			string += repr(self.formulas[i])
@@ -121,10 +162,15 @@ class And():
 		return "(" + string + ")"
 
 	def __eq__(self, other):
+		"""
+		Equality check.
+		"""
 		return isinstance(other, And) and self.formulas == other.formulas
 
-	#Method returns conjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is false.
 	def evaluate(self, dict):
+		"""
+		Returns the conjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is false.
+		"""
 		for formula in self.formulas:
 			if formula.evaluate(dict) is False:
 				return False
@@ -138,21 +184,28 @@ class And():
 		"""
 		return And([x.replace(dict) for x in self.formulas])
 
-	#If conjunction contains no variables
 	def isEmpty(self):
+		"""
+		If conjunction contains no variables
+		"""
 		if self.formulas:
 			return False
 		else:
 			return True
 
-############## Class for representation of OR ########################
+############################################ Class for representation of OR ############################################
 class Or():
 
-	#Argument formulas represents list of formulas which are combined to a single formula by disjunctions.
 	def __init__(self, formulas):
+		"""
+		Argument formulas represents list of formulas which are combined to a single formula by disjunctions.
+		"""
 		self.formulas = formulas
 
 	def __repr__(self):
+		"""
+		Representation of OR.
+		"""
 		string = ""
 		for i in xrange(len(self.formulas) - 1):
 			string += repr(self.formulas[i])
@@ -161,10 +214,15 @@ class Or():
 		return "(" + string + ")"
 
 	def __eq__(self, other):
+		"""
+		Equality check.
+		"""
 		return isinstance(other, Or) and self.formulas == other.formulas
 
-	#Method returns disjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is true.
 	def evaluate(self, dict):
+		"""
+		Returns the disjunction of values of all the formulas being present in the list. We stop as soon as one of the formula is true.
+		"""
 		for formula in self.formulas:
 			if formula.evaluate(dict) is True:
 				return True
@@ -178,8 +236,10 @@ class Or():
 		"""
 		return Or([x.replace(dict) for x in self.formulas])
 
-	#If disjunction contains no variables
 	def isEmpty(self):
+		"""
+		If disjunction contains no variables
+		"""
 		if self.formulas:
 			return False
 		else:

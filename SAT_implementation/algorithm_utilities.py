@@ -1,5 +1,10 @@
-from SAT_implementation import bool_formulas as bf
+"""
+Utility methods used in DPLL algorithm.
+"""
 
+__author__ = 'Grega'
+
+import SAT_implementation.bool_formulas as bf
 
 def cnf_nnf(p):
 	"""
@@ -243,7 +248,6 @@ def __any__(formulas, funct):
 			return True
 	return False
 
-
 def extract_variables(p):
 	"""
 	Extracts all of the variables that occur in the specified formula, removes the duplicates and sorts the result.
@@ -271,42 +275,34 @@ def remove_duplicates(lst):
 
 def pure_variables(cnf_formula):
 	"""
-	Checks for pure variables in CNF formula and returns appropriate values assigned
+	Checks for pure variables in CNF formula and returns appropriate assigned values
 	"""
 	if isinstance(cnf_formula, bf.Tru) or isinstance(cnf_formula, bf.Fls) or isinstance(cnf_formula, bf.Var) or isinstance(cnf_formula, bf.Not):
 		return {}
 
-	pure_variables = []
+	pure_variable_list = []
 	not_pure = []
 	for clause_OR in cnf_formula.formulas:
 		for var in clause_OR.formulas:
 			if isinstance(var, bf.Var):
-				if var.name in not_pure:
-					continue
-				elif var in pure_variables:
-					continue
-				elif bf.Not(var) in pure_variables:
-					pure_variables.remove(bf.Not(var))
+				if bf.Not(var) in pure_variable_list:
+					pure_variable_list.remove(bf.Not(var))
 					not_pure.append(var.name)
-				else:
-					pure_variables.append(var)
+				elif var.name not in not_pure and var not in pure_variable_list:
+					pure_variable_list.append(var)
 			elif isinstance(var, bf.Not):
-				if var.formula.name in not_pure:
-					continue
-				elif var in pure_variables:
-					continue
-				elif var.formula in pure_variables:
-					pure_variables.remove(var.formula)
+				if var.formula in pure_variable_list:
+					pure_variable_list.remove(var.formula)
 					not_pure.append(var.formula.name)
-				else:
-					pure_variables.append(var)
-	#Assing values to pure variables
+				elif var.formula.name not in not_pure and var not in pure_variable_list:
+					pure_variable_list.append(var)
+	# Assign values to pure variables
 	values = {}
-	for pure_var in pure_variables:
-		if isinstance(pure_var, bf.Var):
-			values[pure_var.name] = bf.Tru()
-		elif isinstance(pure_var, bf.Not):
-			values[pure_var.formula.name] = bf.Fls()
+	for pure_variable in pure_variable_list:
+		if isinstance(pure_variable, bf.Var):
+			values[pure_variable.name] = bf.Tru()
+		elif isinstance(pure_variable, bf.Not):
+			values[pure_variable.formula.name] = bf.Fls()
 	return values
 
 
