@@ -1,7 +1,7 @@
 """
 Translation of graph coloring problem to SAT problem
 """
-from SAT_implementation import bool_formulas as bf
+import SAT_implementation.bool_formulas as bf
 
 
 def graph_coloring(G, b):
