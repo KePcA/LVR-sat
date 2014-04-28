@@ -20,8 +20,8 @@ class remove_duplicates_unit_test(unittest.TestCase):
 		"""
 		Test removing duplicates. Result must be duplicates removed.
 		"""
-		formula = [bf.Var("b"), bf.Var("a"), bf.Var("b"), bf.Var("a")]
-		result = [bf.Var("b"), bf.Var("a")]
+		formula = [bf.Var("b"), bf.Var("a"), bf.Var("b"), bf.Var("c"), bf.Var("a"), bf.Tru(), bf.Fls(), bf.Var("c")]
+		result = [bf.Fls(), bf.Tru(), bf.Var("a"), bf.Var("b"), bf.Var("c")]
 		self.assertEqual(result, au.remove_duplicates(formula), "Invalid replacement, expected the same as specified by result.")
 
 	def test_with_no_duplicates(self):
@@ -29,7 +29,8 @@ class remove_duplicates_unit_test(unittest.TestCase):
 		Test removing values that do not contain duplicates. Result must be the same as the input.
 		"""
 		formula = [bf.Var("b"), bf.Var("a")]
-		self.assertEqual(formula, au.remove_duplicates(formula), "Invalid removal, expected the same as entered.")
+		result = [bf.Var("a"), bf.Var("b")]
+		self.assertEqual(result, au.remove_duplicates(formula), "Invalid removal, expected the same as specified by result.")
 
 if __name__ == '__main__':
 	"""

@@ -16,7 +16,7 @@ class hadamard_to_SAT_unit_test(unittest.TestCase):
 		n = 1
 		translation = ha.hadamard_translation(n)
 		result = bf.Fls()
-		self.assertEqual(result, translation, "Invalid hadamard translation for n = 1, expected the same as result.")
+		self.assertEqual(result, translation, "Invalid hadamard translation for n = 1, expected Fls.")
 
 	def test_hadamard_translation_2(self):
 		"""
@@ -24,7 +24,6 @@ class hadamard_to_SAT_unit_test(unittest.TestCase):
 		"""
 		n = 2
 		translation = ha.hadamard_translation(n)
-		print translation
 		self.assertNotEqual(bf.Fls(), translation, "Invalid hadamard translation for n = 2, expected not Fls.")
 
 	def test_hadamard_translation_3(self):
@@ -34,7 +33,7 @@ class hadamard_to_SAT_unit_test(unittest.TestCase):
 		n = 3
 		translation = ha.hadamard_translation(n)
 		result = bf.Fls()
-		self.assertEqual(result, translation, "Invalid hadamard translation for n = 3, expected not Fls.")
+		self.assertEqual(result, translation, "Invalid hadamard translation for n = 3, expected Fls.")
 
 	def test_hadamard_translation_4(self):
 		"""

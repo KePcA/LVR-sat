@@ -5,12 +5,14 @@ Utility methods used in DPLL algorithm.
 __author__ = 'Grega'
 
 import SAT_implementation.bool_formulas as bf
+import itertools
 
 def cnf_nnf(p):
 	"""
 	Converts the specified p formula to a NNF form and then to a CNF form.
 	"""
-	return cnf(nnf(p))
+	nnf_p = nnf(p)
+	return cnf(nnf_p)
 
 
 def cnf(p):
@@ -114,10 +116,10 @@ def nnf(p):
 	elif isinstance(p, bf.And):
 			return bf.And(map(nnf, p.formulas))
 
-
-def simplify(p):
+def simplify(p, use_absorptions = False):
 	"""
-	Simplified the specified p formula.
+	Simplified the specified p formula. Use absorptions is by default set to False because it causes a slow down in
+	performance.
 	"""
 	if isinstance(p, bf.Tru) or isinstance(p, bf.Fls) or isinstance(p, bf.Var):
 		# Values that can't be simplified any further.
@@ -154,14 +156,15 @@ def simplify(p):
 		if length == 1:
 			return formulas[0]
 		else:
-			# Find all of the or absorptions
-			absorption, absorption_tuples = __find_absorptions__(formulas, bf.And)
-			# Remove all of the absorptions
-			formulas = filter(lambda x: x not in absorption, formulas)
-			# Extend the list wit new absorptions
-			formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
-			# Remove duplicates
-			formulas = remove_duplicates(formulas)
+			if use_absorptions :
+				# Find all of the or absorptions
+				absorption, absorption_tuples = __find_absorptions__(formulas, bf.And)
+				# Remove all of the absorptions
+				formulas = filter(lambda x: x not in absorption, formulas)
+				# Extend the list wit new absorptions
+				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
+				# Remove duplicates
+				formulas = remove_duplicates(formulas)
 			# Remove all falses
 			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
 			# If one is true, true must be returned.
@@ -189,14 +192,15 @@ def simplify(p):
 		if length == 1:
 			return formulas[0]
 		else:
-			# Find all of the and absorptions
-			absorption, absorption_tuples = __find_absorptions__(formulas, bf.Or)
-			# Remove all of the absorptions
-			formulas = filter(lambda x: x not in absorption, formulas)
-			# Extend the list wit new absorptions
-			formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
-			# Remove duplicates
-			formulas = remove_duplicates(formulas)
+			if use_absorptions :
+				# Find all of the and absorptions
+				absorption, absorption_tuples = __find_absorptions__(formulas, bf.Or)
+				# Remove all of the absorptions
+				formulas = filter(lambda x: x not in absorption, formulas)
+				# Extend the list wit new absorptions
+				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
+				# Remove duplicates
+				formulas = remove_duplicates(formulas)
 			# Remove all trues
 			formulas = filter(lambda x: not isinstance(x, bf.Tru), formulas)
 			# If one is false, false must be returned.
@@ -220,9 +224,15 @@ def __find_absorptions__(lst, class_value):
 	Finds all of the absorptions fo the specified class_value and adds them to a list. Besides the list a list of tuples
 	(x, absorb) is returned.
 	"""
+	if len(lst) > 2000:
+		print "b"
+
 	absorptions = []
 	absorption_tuples = []
+	i = 0
 	for x in lst:
+		print i, len(lst), x
+		i += 1
 		if isinstance(x, class_value):
 			tmp = []
 			for y in lst:
@@ -233,6 +243,8 @@ def __find_absorptions__(lst, class_value):
 			if len(tmp) != 0:
 				absorptions.append(x)
 				absorption_tuples.append((x, tmp))
+	if len(lst) > 2000:
+		print "c"
 	return absorptions, absorption_tuples
 
 
@@ -270,8 +282,7 @@ def remove_duplicates(lst):
 	"""
 	Returns a copy of the specified list that contains no duplicates.
 	"""
-	return [lst[i] for i, x in enumerate(lst) if x not in lst[i + 1:]]
-
+	return [x for x, _ in itertools.groupby(sorted(lst))]
 
 def pure_variables(cnf_formula):
 	"""

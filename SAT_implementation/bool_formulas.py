@@ -22,6 +22,18 @@ class Fls():
 		"""
 		return isinstance(other, Fls)
 
+	def __ne__(self, other):
+		"""
+		Not equality check.
+		"""
+		return not isinstance(other, Fls)
+
+	def __lt__(self, other):
+		"""
+		Order check
+		"""
+		return True
+
 	def evaluate(self, dict):
 		"""
 		Always evaluates to False.
@@ -52,6 +64,21 @@ class Tru():
 		Equality check.
 		"""
 		return isinstance(other, Tru)
+
+	def __ne__(self, other):
+		"""
+		Not equality check.
+		"""
+		return not isinstance(other, Tru)
+
+	def __lt__(self, other):
+		"""
+		Order check
+		"""
+		if isinstance(other, Tru):
+			return True
+		else:
+			return not isinstance(other, Fls)
 
 	def evaluate(self, dict):
 		"""
@@ -86,6 +113,21 @@ class Var:
 		Equality check.
 		"""
 		return isinstance(other, Var) and other.name == self.name
+
+	def __ne__(self, other):
+		"""
+		Not equality check.
+		"""
+		return not isinstance(other, Var) or self.name != other.name
+
+	def __lt__(self, other):
+		"""
+		Order check
+		"""
+		if isinstance(other, Var):
+			return self.name < other.name
+		else:
+			return not isinstance(other, Tru)
 
 	def evaluate(self, dict):
 		"""
@@ -127,6 +169,21 @@ class Not():
 		"""
 		return isinstance(other, Not) and self.formula == other.formula
 
+	def __ne__(self, other):
+		"""
+		Not equality check.
+		"""
+		return not isinstance(other, Not) or self.formula != other.formula
+
+	def __lt__(self, other):
+		"""
+		Order check
+		"""
+		if isinstance(other, Not):
+			return self.formula < other.formula
+		else:
+			return not isinstance(other, Var)
+
 	def evaluate(self, dict):
 		"""
 		Returns the negation of our formula which value we get from the dictionary of variables' values (dict).
@@ -166,6 +223,21 @@ class And():
 		Equality check.
 		"""
 		return isinstance(other, And) and self.formulas == other.formulas
+
+	def __ne__(self, other):
+		"""
+		Not equality check.
+		"""
+		return not isinstance(other, And) or self.formulas != other.formulas
+
+	def __lt__(self, other):
+		"""
+		Order check
+		"""
+		if isinstance(other, And):
+			return self.formulas < other.formulas
+		else:
+			return not isinstance(other, Not)
 
 	def evaluate(self, dict):
 		"""
@@ -218,6 +290,18 @@ class Or():
 		Equality check.
 		"""
 		return isinstance(other, Or) and self.formulas == other.formulas
+
+	def __ne__(self, other):
+		"""
+		Not equality check.
+		"""
+		return not isinstance(other, Or) or self.formulas != other.formulas
+
+	def __lt__(self, other):
+		"""
+		Order check
+		"""
+		return isinstance(other, Or) and self.formulas < other.formulas
 
 	def evaluate(self, dict):
 		"""
