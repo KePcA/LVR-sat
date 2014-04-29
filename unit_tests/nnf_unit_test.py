@@ -73,6 +73,19 @@ class nnf_unit_test(unittest.TestCase):
 		result = bf.And([bf.Not(bf.Var("a")),bf.Or([bf.And([bf.Var("b"), bf.Var("c"), bf.Var("d")]), bf.Not(bf.Var("c"))]), bf.Var("a")])
 		self.assertEqual(result, au.nnf(formula), "Invalid formula, expected the same as specified by result.")
 
+	def test_negation_of_bool_values_to_nnf(self):
+		"""
+		Tests the conversion of boolean values using the nnf method.
+		"""
+		formula = bf.Not(bf.Tru())
+		result = bf.Fls()
+		self.assertEqual(result, au.nnf(formula), "Invalid formula, expected the same as specified by result.")
+
+		formula = bf.Not(bf.Fls())
+		result = bf.Tru()
+		self.assertEqual(result, au.nnf(formula), "Invalid formula, expected the same as specified by result.")
+
+
 if __name__ == '__main__':
 	"""
 	Runs the unit test if the script is run directly.

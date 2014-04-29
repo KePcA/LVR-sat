@@ -138,16 +138,16 @@ def simplify(p, use_absorptions = False):
 			return p
 		elif isinstance(x, bf.Not):
 			# Not(Not(x)) -> x
-			return simplify(x.formula)
+			return simplify(x.formula, use_absorptions)
 		elif isinstance(x, bf.Or):
 			# Or(y1,...,yn) -> And(Not(y1),...Not(yn))
-			return simplify(bf.And(map(lambda y: bf.Not(y), x.formulas)))
+			return simplify(bf.And(map(lambda y: bf.Not(y), x.formulas)), use_absorptions)
 		elif isinstance(x, bf.And):
 			# And(y1,...,yn) -> Or(Not(y1),...Not(yn))
-			return simplify(bf.Or(map(lambda y: bf.Not(y), x.formulas)))
+			return simplify(bf.Or(map(lambda y: bf.Not(y), x.formulas)), use_absorptions)
 	elif isinstance(p, bf.Or):
 		# Simplify sub-formulas
-		simplified = map(simplify, p.formulas)
+		simplified = map(lambda y: simplify(y, use_absorptions), p.formulas)
 		# Merge and remove duplicates.
 		formulas = remove_duplicates(sum([x.formulas if isinstance(x, bf.Or) else [x] for x in simplified], []))
 		length = len(formulas)
@@ -156,13 +156,13 @@ def simplify(p, use_absorptions = False):
 		if length == 1:
 			return formulas[0]
 		else:
-			if use_absorptions :
+			if use_absorptions:
 				# Find all of the or absorptions
 				absorption, absorption_tuples = __find_absorptions__(formulas, bf.And)
 				# Remove all of the absorptions
 				formulas = filter(lambda x: x not in absorption, formulas)
 				# Extend the list wit new absorptions
-				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
+				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y]), use_absorptions) for x, y in absorption_tuples])
 				# Remove duplicates
 				formulas = remove_duplicates(formulas)
 			# Remove all falses
@@ -183,7 +183,7 @@ def simplify(p, use_absorptions = False):
 				return bf.Or(sorted(formulas))
 	elif isinstance(p, bf.And):
 		# Simplify sub-formulas
-		simplified = map(simplify, p.formulas)
+		simplified = map(lambda y: simplify(y, use_absorptions), p.formulas)
 		# Merge and remove duplicates.
 		formulas = remove_duplicates(sum([x.formulas if isinstance(x, bf.And) else [x] for x in simplified], []))
 		length = len(formulas)
@@ -198,7 +198,7 @@ def simplify(p, use_absorptions = False):
 				# Remove all of the absorptions
 				formulas = filter(lambda x: x not in absorption, formulas)
 				# Extend the list wit new absorptions
-				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y])) for x, y in absorption_tuples])
+				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y]), use_absorptions) for x, y in absorption_tuples])
 				# Remove duplicates
 				formulas = remove_duplicates(formulas)
 			# Remove all trues
@@ -228,7 +228,6 @@ def __find_absorptions__(lst, class_value):
 	absorption_tuples = []
 	i = 0
 	for x in lst:
-		print i, len(lst), x
 		i += 1
 		if isinstance(x, class_value):
 			tmp = []
