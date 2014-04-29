@@ -167,14 +167,14 @@ def simplify(p, use_absorptions = False):
 				formulas = remove_duplicates(formulas)
 			# Remove all falses
 			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
-			# If one is true, true must be returned.
-			if __any__(formulas, lambda x: isinstance(x, bf.Tru)):
+			# If one is true, true must be returned. Because of order (F, T, Var, Not, And, Or) not all elements need to be checked.
+			length = len(formulas)
+			if length > 1 and ((isinstance(formulas[0], bf.Fls) and isinstance(formulas[1], bf.Tru)) or isinstance(formulas[0], bf.Tru)):
 				return bf.Tru()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return true
 			if __any__(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
 					return bf.Tru()
 			# Recheck current length of formulas
-			length = len(formulas)
 			if length == 0:
 				return bf.Tru()
 			if length == 1:
@@ -203,14 +203,14 @@ def simplify(p, use_absorptions = False):
 				formulas = remove_duplicates(formulas)
 			# Remove all trues
 			formulas = filter(lambda x: not isinstance(x, bf.Tru), formulas)
-			# If one is false, false must be returned.
-			if __any__(formulas, lambda x: isinstance(x, bf.Fls)):
+			# If one is false, false must be returned. Because of order (F, T, Var, Not, And, Or) only first element needs to be checked.
+			length = len(formulas)
+			if length > 0 and isinstance(formulas[0], bf.Fls):
 				return bf.Fls()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return false
 			if __any__(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
 				return bf.Fls()
 			# Recheck current length of formulas
-			length = len(formulas)
 			if length == 0:
 				return bf.Tru()
 			if length == 1:
@@ -309,5 +309,3 @@ def pure_variables(cnf_formula):
 		elif isinstance(pure_variable, bf.Not):
 			values[pure_variable.formula.name] = bf.Fls()
 	return values
-
-
