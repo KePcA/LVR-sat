@@ -167,9 +167,9 @@ def simplify(p, use_absorptions = False):
 				formulas = remove_duplicates(formulas)
 			# Remove all falses
 			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
-			# If one is true, true must be returned. Because of order (F, T, Var, Not, And, Or) not all elements need to be checked.
+			# If one is true, true must be returned. Because of order (F, T, Var, Not, And, Or) and filtering only first element needs to be checked.
 			length = len(formulas)
-			if length > 1 and ((isinstance(formulas[0], bf.Fls) and isinstance(formulas[1], bf.Tru)) or isinstance(formulas[0], bf.Tru)):
+			if length > 0 and isinstance(formulas[0], bf.Tru):
 				return bf.Tru()
 			# If there is an element x that is equal to Not and the value of Not is also contained in the formulas return true
 			if __any__(formulas, lambda x: isinstance(x, bf.Not) and x.formula in formulas):
@@ -274,7 +274,7 @@ def extract_variables(p):
 
 def remove_duplicates(lst):
 	"""
-	Returns a copy of the specified list that contains no duplicates.
+	Returns a sorted copy of the specified list that contains no duplicates.
 	"""
 	return [x for x, _ in itertools.groupby(sorted(lst))]
 
