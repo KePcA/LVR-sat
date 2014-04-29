@@ -25,14 +25,13 @@ def sudoku_translation(sudoku):
 				#Loop through all the nine colors
 				for k in range(9):
 					#We declare a variable of name r(i)c(j)n(k) meaning row:i , column:j , number:k
-					variable  = bf.Var("r"+str(i+1)+"c"+str(j+1)+"n"+str(k+1))
+					variable = bf.Var("r" + str(i + 1)+"c" + str(j + 1) + "n" + str(k + 1))
 					#It is color of k
-					if color==k+1:
+					if color == k + 1:
 						formula.append(variable)
 					#It is not color of k
 					else:
 						formula.append(bf.Not(variable))
-
 			#Square does not have a number
 			else:
 
@@ -41,8 +40,8 @@ def sudoku_translation(sudoku):
 				for k in range(9):
 					ANDs = bf.And([])
 					for l in range(9):
-						variable = bf.Var("r"+str(i+1)+"c"+str(j+1)+"n"+str(k+1))
-						if k==l:
+						variable = bf.Var("r" + str(i + 1) + "c" + str(j + 1) + "n" + str(k + 1))
+						if k == l:
 							ANDs.formulas.append(variable)
 						else:
 							ANDs.formulas.append(bf.Not(variable))
@@ -52,14 +51,14 @@ def sudoku_translation(sudoku):
 				#Each row contains exactly one of each number from 1 to 9
 				ORs_2 = bf.Or([])
 				for k in range(9):
-					variable = bf.Var("r"+str(j+1)+"c"+str(k+1)+"n"+str(i+1))
+					variable = bf.Var("r" + str(j + 1) + "c" + str(k + 1) + "n" + str(i + 1))
 					ORs_2.formulas.append(variable)
 				formula.append(ORs_2)
 
 				#Each column contains exactly one of each number from 1 to 9
 				ORs_3 = bf.Or([])
 				for k in range(9):
-					variable = bf.Var("r"+str(k+1)+"c"+str(j+1)+"n"+str(i+1))
+					variable = bf.Var("r" + str(k + 1) + "c" + str(j + 1) +"n" + str(i + 1))
 					ORs_3.formulas.append(variable)
 				formula.append(ORs_3)
 

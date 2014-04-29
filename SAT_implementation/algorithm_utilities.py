@@ -224,9 +224,6 @@ def __find_absorptions__(lst, class_value):
 	Finds all of the absorptions fo the specified class_value and adds them to a list. Besides the list a list of tuples
 	(x, absorb) is returned.
 	"""
-	if len(lst) > 2000:
-		print "b"
-
 	absorptions = []
 	absorption_tuples = []
 	i = 0
@@ -243,8 +240,6 @@ def __find_absorptions__(lst, class_value):
 			if len(tmp) != 0:
 				absorptions.append(x)
 				absorption_tuples.append((x, tmp))
-	if len(lst) > 2000:
-		print "c"
 	return absorptions, absorption_tuples
 
 

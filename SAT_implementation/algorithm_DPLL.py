@@ -12,6 +12,7 @@ def DPLL(formula):
 	Implementation of DPLL - argument is formula in CNF form. Returns False if formula is not in SAT or values of variables otherwise.
 	"""
 	CNF_formula = au.cnf_nnf(formula)
+
 	values = {}
 	while True:
 		if isinstance(CNF_formula, bf.Tru) or isinstance(CNF_formula, bf.Fls) or isinstance(CNF_formula, bf.Var) or isinstance(CNF_formula, bf.Not):
