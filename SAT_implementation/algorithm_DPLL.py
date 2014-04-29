@@ -56,10 +56,10 @@ def DPLL(formula):
 		# unsatisfiable problem
 		return False
 
-
-
-#Solves SAT problem by trying all the possibilities for variables in formula - WORKING
 def SAT_solver_brute_force(CNF_formula, dictionary):
+	"""
+	Solves SAT problem by trying all the possibilities for variables in formula.
+	"""
 	if isinstance(CNF_formula, bf.Tru):
 		#Formula is Tru / satisfiable - return dictionary with given values of variables
 		return dictionary

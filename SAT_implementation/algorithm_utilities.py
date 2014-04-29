@@ -165,8 +165,9 @@ def simplify(p, use_absorptions = False):
 				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y]), use_absorptions) for x, y in absorption_tuples])
 				# Remove duplicates
 				formulas = remove_duplicates(formulas)
-			# Remove all falses
-			formulas = filter(lambda x: not isinstance(x, bf.Fls), formulas)
+			# Remove all falses. Because of order (F, T, Var, Not, And, Or) only first element needs to be checked for removal.
+			if length > 0 and isinstance(formulas[0], bf.Fls):
+				formulas = formulas[1:]
 			# If one is true, true must be returned. Because of order (F, T, Var, Not, And, Or) and filtering only first element needs to be checked.
 			length = len(formulas)
 			if length > 0 and isinstance(formulas[0], bf.Tru):
@@ -192,7 +193,7 @@ def simplify(p, use_absorptions = False):
 		if length == 1:
 			return formulas[0]
 		else:
-			if use_absorptions :
+			if use_absorptions:
 				# Find all of the and absorptions
 				absorption, absorption_tuples = __find_absorptions__(formulas, bf.Or)
 				# Remove all of the absorptions
@@ -201,8 +202,11 @@ def simplify(p, use_absorptions = False):
 				formulas.extend([simplify(bf.Or([z for z in x.formulas if z not in y]), use_absorptions) for x, y in absorption_tuples])
 				# Remove duplicates
 				formulas = remove_duplicates(formulas)
-			# Remove all trues
-			formulas = filter(lambda x: not isinstance(x, bf.Tru), formulas)
+			# Remove all trues. Because of order (F, T, Var, Not, And, Or) only first and second element needs to be checked for removal.
+			if length > 0 and isinstance(formulas[0], bf.Tru):
+				formulas = formulas[1:]
+			elif length > 1 and isinstance(formulas[1], bf.Tru):
+				del formulas[1]
 			# If one is false, false must be returned. Because of order (F, T, Var, Not, And, Or) only first element needs to be checked.
 			length = len(formulas)
 			if length > 0 and isinstance(formulas[0], bf.Fls):
