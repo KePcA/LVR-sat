@@ -68,7 +68,7 @@ def run_example(sudoku):
 	print "TOTAL TIME NEEDED: " + str(translation_end + dpll_end)
 	print "-----------------------------------------------------------------------------------------------------------------\n"
 
-sudoku = [[None, 8, None, 1, 6, None, None, None, 7],
+sudoku1 = [[None, 8, None, 1, 6, None, None, None, 7],
 		[1, None, 7, 4, None, 3, 6, None, None],
 		[3, None, None, 5, None, None, 4, 2, None],
 		[None, 9, None, None, 3, 2, 7, None, 4],
@@ -78,4 +78,15 @@ sudoku = [[None, 8, None, 1, 6, None, None, None, 7],
 		[None, None, 6, 7, None, 1, 9, None, 3],
 		[7, None, None, None, 9, 6, None, 4, None]]
 
-run_example(sudoku)
+sudoku2 = [[None, 3, 5, 2, 6, 9, 7, 8, 1],
+		[6, 8, 2, 5, 7, 1, 4, 9, 3],
+		[1, 9, 7, 8, 3, 4, 5, 6, 2],
+		[8, 2, 6, 1, 9, 5, 3, 4, 7],
+		[3, 4, 7, 6, 8, 2, 9, 1, 5],
+		[9, 5, 1, 7, 4, 3, 6, 2, 8],
+		[5, 1, 9, 3, 2, 6, 8, 7, 4],
+		[2, 4, 8, 9, 5, 7, 1, 3, 6],
+		[7, 6, 3, 4, 1, 8, 2, 5, 9]]
+
+
+run_example(sudoku2)
