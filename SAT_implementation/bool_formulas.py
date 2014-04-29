@@ -127,7 +127,7 @@ class Var:
 		if isinstance(other, Var):
 			return self.name < other.name
 		else:
-			return not isinstance(other, Tru)
+			return not isinstance(other, Tru) and not isinstance(other, Fls)
 
 	def evaluate(self, dict):
 		"""
@@ -182,7 +182,7 @@ class Not():
 		if isinstance(other, Not):
 			return self.formula < other.formula
 		else:
-			return not isinstance(other, Var)
+			return not isinstance(other, Var) and not isinstance(other, Tru) and not isinstance(other, Fls)
 
 	def evaluate(self, dict):
 		"""
@@ -237,7 +237,7 @@ class And():
 		if isinstance(other, And):
 			return self.formulas < other.formulas
 		else:
-			return not isinstance(other, Not)
+			return not isinstance(other, Not) and not isinstance(other, Var) and not isinstance(other, Tru) and not isinstance(other, Fls)
 
 	def evaluate(self, dict):
 		"""
