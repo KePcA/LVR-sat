@@ -84,7 +84,7 @@ class algorithm_DPLL_unit_test(unittest.TestCase):
 		b = bf.Var("b")
 		c = bf.Var("c")
 		formula = bf.Or([bf.Not(a), bf.And([bf.Or([a, b, c]), bf.Not(b)])])
-		result = {'a': bf.Tru(), 'b': bf.Fls(), 'c': bf.Tru()}
+		result = {'a': bf.Fls()}
 		self.assertEqual(result, dpll.DPLL(formula), "Invalid values for formula 7, expected the same as result.")
 
 	def test_satisfiable_formula_8(self):

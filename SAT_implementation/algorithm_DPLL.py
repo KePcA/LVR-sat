@@ -11,7 +11,7 @@ def DPLL(formula):
 	"""
 	Implementation of DPLL - argument is formula in CNF form. Returns False if formula is not in SAT or values of variables otherwise.
 	"""
-	CNF_formula = au.cnf_nnf(formula)
+	CNF_formula = au.simplify(au.cnf_nnf(formula))
 
 	values = {}
 	while True:
@@ -27,7 +27,7 @@ def DPLL(formula):
 				temp_value[clause.name] = bf.Tru()
 				break
 			elif isinstance(clause, bf.Not):
-				#I t is only literal - negated Var
+				# It is only literal - negated Var
 				values[clause.formula.name] = bf.Fls()
 				temp_value[clause.formula.name] = bf.Fls()
 				break

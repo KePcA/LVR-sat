@@ -79,7 +79,7 @@ class simplify_test(unittest.TestCase):
 		p1 = bf.And([bf.Var("a"), bf.And([bf.Var("b"), bf.Var("a")]), bf.Or([bf.Var("c"), bf.Var("b")])])
 		p2 = bf.Or([bf.Var("a"), bf.And([bf.Var("b"), bf.Var("a")]), bf.Or([bf.Var("c"), bf.Var("b")])])
 		p = bf.And([p2, bf.Not(bf.And([bf.Tru(), bf.Tru(), bf.Tru(), bf.Not(bf.Tru()), bf.Not(bf.Var("a")), p1]))])
-		result = bf.Or([bf.Var("b"), bf.Var("c"), bf.And([bf.Var("a"), bf.Var("b")]), bf.Var("a")])
+		result = bf.Or([bf.Var("a"), bf.Var("b"), bf.Var("c"), bf.And([bf.Var("a"), bf.Var("b")])])
 		self.assertEqual(result, au.simplify(p, use_absorptions = True), "Invalid simplification, expected same as result.")
 
 

@@ -180,7 +180,7 @@ def simplify(p, use_absorptions = False):
 			if length == 1:
 				return formulas[0]
 			else:
-				return bf.Or(sorted(formulas))
+				return bf.Or(formulas)
 	elif isinstance(p, bf.And):
 		# Simplify sub-formulas
 		simplified = map(lambda y: simplify(y, use_absorptions), p.formulas)
@@ -216,7 +216,7 @@ def simplify(p, use_absorptions = False):
 			if length == 1:
 				return formulas[0]
 			else:
-				return bf.And(sorted(formulas))
+				return bf.And(formulas)
 
 
 def __find_absorptions__(lst, class_value):
