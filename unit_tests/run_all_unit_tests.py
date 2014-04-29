@@ -6,5 +6,5 @@ if __name__ == "__main__":
 	"""
 	Runs all of the unit tests.
 	"""
-	all_tests = unittest.TestLoader().discover('unit_test', pattern='*.py')
+	all_tests = unittest.TestLoader().discover('unit_tests', pattern='*.py')
 	unittest.TextTestRunner().run(all_tests)
