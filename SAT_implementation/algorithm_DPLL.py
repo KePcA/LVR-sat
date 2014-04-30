@@ -20,17 +20,16 @@ def DPLL(formula):
 			break
 
 		temp_value = {}
-		for clause in CNF_formula.formulas:
-			if isinstance(clause, bf.Var):
-				#It is only literal - Var
-				values[clause.name] = bf.Tru()
-				temp_value[clause.name] = bf.Tru()
-				break
-			elif isinstance(clause, bf.Not):
-				# It is only literal - negated Var
-				values[clause.formula.name] = bf.Fls()
-				temp_value[clause.formula.name] = bf.Fls()
-				break
+        #Always check only for first clause in formula - sequence is F, T, Var, Not, And
+		clause = CNF_formula.formulas[0]
+		if isinstance(clause, bf.Var):
+			#It is only literal - Var
+			values[clause.name] = bf.Tru()
+			temp_value[clause.name] = bf.Tru()
+		elif isinstance(clause, bf.Not):
+			# It is only literal - negated Var
+			values[clause.formula.name] = bf.Fls()
+			temp_value[clause.formula.name] = bf.Fls()
 
 		if temp_value:
 			#We found literal - replace formula with its value, simplify, put in cnf and look for literal again
