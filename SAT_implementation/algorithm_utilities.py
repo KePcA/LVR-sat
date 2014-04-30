@@ -230,9 +230,7 @@ def __find_absorptions__(lst, class_value):
 	"""
 	absorptions = []
 	absorption_tuples = []
-	i = 0
 	for x in lst:
-		i += 1
 		if isinstance(x, class_value):
 			tmp = []
 			for y in lst:
