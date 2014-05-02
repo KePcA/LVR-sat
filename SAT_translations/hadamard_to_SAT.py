@@ -12,16 +12,23 @@ def hadamard_translation(n):
 	"""
 	result = bf.And([])
 
-	if n % 2 != 0:
+	if n == 1:
+		return bf.Var("r0c0")
+
+	#It does nt exists for those
+	elif n % 2 != 0:
 		return bf.Fls()
 	else:
+		#For the first row and column
 		result.formulas.append(bf.Var("r0c0"))
 		for i in range(1,n):
 			result.formulas.append(bf.Var("r0c%d" % i))
 			result.formulas.append(bf.Var("r%dc0" % i))
 
+		#Do the XOR between different rows (XOR is expressed by AND, OR and NOT)
 		for i in range(n):
 			for j in range(i + 1, n):
+				#Half of them has to be OK
 				div = n//2
 				result.formulas.append(bf.Var("r%dr%df%dn%d" % (i, j, n, div)))
 				result.formulas.append(bf.Var("r%dr%df1n0" % (i, j)))
@@ -60,3 +67,7 @@ def hadamard_translation(n):
 						q = bf.Or([q1, q2])
 						result.formulas.append(bf.Or([bf.And([p, q]), bf.And([bf.Not(p), bf.Not(q)])]))
 		return result
+
+
+
+
