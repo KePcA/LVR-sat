@@ -40,10 +40,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="hadamard_to_SAT.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="hadamard_to_SAT.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SAT_translations/hadamard_to_SAT.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="73" column="0" selection-start="2399" selection-end="2399" vertical-scroll-proportion="2.8660507" vertical-offset="0" max-vertical-offset="1343">
+            <state line="73" column="0" selection-start="2399" selection-end="2399" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="algorithm_utilities.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/SAT_implementation/algorithm_utilities.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="292" column="17" selection-start="10077" selection-end="10077" vertical-scroll-proportion="1.5261905" vertical-offset="4306" max-vertical-offset="5440">
               <folding />
             </state>
           </provider>
@@ -518,7 +527,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="784" extended-state="1" />
+    <frame x="-8" y="-8" width="1382" height="784" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -565,7 +574,9 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/SAT_implementation/algorithm_utilities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="292" column="17" selection-start="10077" selection-end="10077" vertical-scroll-proportion="0.0" vertical-offset="4964" max-vertical-offset="5457" />
+        <state line="292" column="17" selection-start="10077" selection-end="10077" vertical-scroll-proportion="0.0" vertical-offset="4964" max-vertical-offset="5457">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
@@ -617,7 +628,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SAT_implementation/algorithm_utilities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="309" column="35" selection-start="10755" selection-end="10755" vertical-scroll-proportion="0.0" vertical-offset="5253" max-vertical-offset="5440" />
+        <state line="309" column="35" selection-start="10755" selection-end="10755" vertical-scroll-proportion="0.0" vertical-offset="5253" max-vertical-offset="5440">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/sudoku_example.py">
@@ -775,11 +788,6 @@
         <state line="73" column="4" selection-start="2545" selection-end="2545" vertical-scroll-proportion="0.0" vertical-offset="776" max-vertical-offset="1530" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SAT_implementation/algorithm_utilities.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="292" column="17" selection-start="10077" selection-end="10077" vertical-scroll-proportion="0.0" vertical-offset="3811" max-vertical-offset="5440" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="126" selection-start="384" selection-end="384" vertical-scroll-proportion="0.0" vertical-offset="294" max-vertical-offset="680" />
@@ -819,7 +827,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SAT_translations/hadamard_to_SAT.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="0" selection-start="2399" selection-end="2399" vertical-scroll-proportion="2.8660507" vertical-offset="0" max-vertical-offset="1343">
+        <state line="73" column="0" selection-start="2399" selection-end="2399" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SAT_implementation/algorithm_utilities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="292" column="17" selection-start="10077" selection-end="10077" vertical-scroll-proportion="1.5261905" vertical-offset="4306" max-vertical-offset="5440">
           <folding />
         </state>
       </provider>
